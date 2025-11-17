@@ -64,7 +64,7 @@ WHERE
 
 
 ALTER TABLE TBL_USERS AUTO_INCREMENT = 1;
-DELETE  FROM TBL_USERS WHERE USER_CD = 3 ;
+DELETE  FROM TBL_USERS WHERE USER_CD = 1 ;
 
 
 -- 기존 프로시저가 있다면 삭제
@@ -150,6 +150,69 @@ DELIMITER ;
 
 
 CALL GenerateTestUsers();
+SELECT * FROM TBL_USERS;
+
+
+
+-- 기존 트리거가 있다면 삭제 (선택 사항)
+DROP TRIGGER IF EXISTS trg_TBL_USERS_UpdateModDttm;
+
+-- 딜리미터 변경
+DELIMITER $$
+
+-- 트리거 정의
+CREATE TRIGGER trg_TBL_USERS_UpdateModDttm
+BEFORE UPDATE ON TBL_USERS
+FOR EACH ROW
+BEGIN
+    -- USER_MOD_DTTM을 현재 시각으로 설정
+    SET NEW.USER_MOD_DTTM = NOW();
+END$$
+
+-- 딜리미터 원래대로 복구
+DELIMITER ;
+
+SELECT
+    USER_CD,
+    USER_NICK_NM,
+    USER_MOD_DTTM
+FROM
+    TBL_USERS
+WHERE
+    USER_CD = 1;
+
+-- 참고: 이 시점의 USER_MOD_DTTM 값을 기억해두세요.
+
+
+
+-- 트리거 작동을 명확히 확인하기 위해 잠시 대기 시간(예: 1초)을 두는 것이 좋습니다.
+-- MySQL 쿼리에는 sleep 명령어가 없으므로, 필요하다면 터미널에서 수동으로 잠시 대기합니다.
+-- 또는 아래 쿼리를 1초 후에 실행한다고 가정합니다.
+
+UPDATE
+    TBL_USERS
+SET
+    USER_NICK_NM = '업데이트된_테스트닉네임'
+WHERE
+    USER_CD = 1;
+
+
+
+SELECT
+    USER_CD,
+    USER_NICK_NM,
+    USER_MOD_DTTM
+FROM
+    TBL_USERS
+WHERE
+    USER_CD = 1;
+
+-- 예상 결과: USER_NICK_NM이 '업데이트된_테스트닉네임'으로 바뀌고,
+-- USER_MOD_DTTM은 UPDATE 쿼리를 실행한 시점으로 변경되어야 합니다.
+
+DROP TRIGGER IF EXISTS trg_TBL_USERS_UpdateModDttm;
+
+DELETE FROM TBL_USERS;
 SELECT * FROM TBL_USERS;
 
 
