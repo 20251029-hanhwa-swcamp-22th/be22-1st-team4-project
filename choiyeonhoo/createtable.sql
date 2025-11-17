@@ -1,23 +1,14 @@
-DROP TABLE IF EXISTS `TBL_REVIEWS`;
-
-CREATE TABLE `TBL_REVIEWS` (
-	`REVIEW_CD`	INT	NOT NULL	COMMENT '리뷰 코드 (PK)',
-	`USER_CD`	INT	NOT NULL	COMMENT '회원 코드 (FK)',
-	`MOVIE_CD`	INT	NOT NULL	COMMENT '영화 코드 (FK)',
-	`RATING`	DECIMAL(2, 1)	NOT NULL	COMMENT '별점',
-	`REVIEW_CONT`	VARCHAR(1000)	NOT NULL	COMMENT '리뷰 내용',
-	`RECOMMEND_CNT`	INT	NOT NULL	DEFAULT 0	COMMENT '추천수',
-	`REVIEW_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '리뷰 작성일시',
-	`REVIEW_MOD_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '리뷰 수정일시'
-);
-
-DROP TABLE IF EXISTS `TBL_PRODUCTS_PACKAGE_SPECS`;
-
+-- =======================================================================
+-- TBL_PRODUCTS_PACKAGE_SPECS : 패키지 상품 상세
+-- =======================================================================
 CREATE TABLE `TBL_PRODUCTS_PACKAGE_SPECS` (
 	`PRODUCT_CD`	INT	NOT NULL	COMMENT '상품 코드 (PFK)',
 	`PRODUCT_LIST`	VARCHAR(500)	NULL	COMMENT '패키지 구성'
 );
 
+-- =======================================================================
+-- TBL_PRODUCTS_DRINK_SPECS : 음료 상품 상세
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_PRODUCTS_DRINK_SPECS`;
 
 CREATE TABLE `TBL_PRODUCTS_DRINK_SPECS` (
@@ -28,6 +19,9 @@ CREATE TABLE `TBL_PRODUCTS_DRINK_SPECS` (
 	`DRINK_MEMO`	VARCHAR(50)	NULL	COMMENT '비고'
 );
 
+-- =======================================================================
+-- TBL_COMMENT : 댓글
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_COMMENT`;
 
 CREATE TABLE `TBL_COMMENT` (
@@ -40,6 +34,9 @@ CREATE TABLE `TBL_COMMENT` (
 	`COMMENT_MOD_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '댓글 수정일시'
 );
 
+-- =======================================================================
+-- TBL_ORDER_DETAILS : 주문 상세
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_ORDER_DETAILS`;
 
 CREATE TABLE `TBL_ORDER_DETAILS` (
@@ -49,6 +46,9 @@ CREATE TABLE `TBL_ORDER_DETAILS` (
 	`ORD_DETL_PRICE_AMT`	INT	NOT NULL	COMMENT '개당 가격'
 );
 
+-- =======================================================================
+-- TBL_ST_PHY : 실물 배송 상태
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_ST_PHY`;
 
 CREATE TABLE `TBL_ST_PHY` (
@@ -56,6 +56,19 @@ CREATE TABLE `TBL_ST_PHY` (
 	`ST_PHY_NM`	VARCHAR(50)	NOT NULL	DEFAULT '결제완료'	COMMENT '결제완료/준비중/배송출발/배송중/배송완료'
 );
 
+-- =======================================================================
+-- TBL_GFC_SEND_TYPE : 기프티콘 발송 타입
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_GFC_SEND_TYPE`;
+
+CREATE TABLE `TBL_GFC_SEND_TYPE` (
+	`GFC_SEND_TYPE_CD`	INT	NOT NULL	COMMENT '기프티콘 발송 방법 코드(PK)',
+	`GFC_SEND_TYPE_NM`	VARCHAR(50)	NOT NULL	COMMENT 'SMS /MMS/EMAIL'
+);
+
+-- =======================================================================
+-- TBL_NOTIFICATIONS : 알림
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_NOTIFICATIONS`;
 
 CREATE TABLE `TBL_NOTIFICATIONS` (
@@ -66,6 +79,9 @@ CREATE TABLE `TBL_NOTIFICATIONS` (
 	`NOTI_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '생성일시'
 );
 
+-- =======================================================================
+-- TBL_POSTS : 게시글
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_POSTS`;
 
 CREATE TABLE `TBL_POSTS` (
@@ -81,6 +97,9 @@ CREATE TABLE `TBL_POSTS` (
 	`POST_MOD_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '게시글 수정일시'
 );
 
+-- =======================================================================
+-- TBL_POST_CATEGORIES : 게시글 카테고리
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_POST_CATEGORIES`;
 
 CREATE TABLE `TBL_POST_CATEGORIES` (
@@ -88,6 +107,9 @@ CREATE TABLE `TBL_POST_CATEGORIES` (
 	`POST_CTGRY_NM`	VARCHAR(50)	NOT NULL	COMMENT '게시글 카테고리명 (한글)'
 );
 
+-- =======================================================================
+-- TBL_PRODUCTS : 상품
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_PRODUCTS`;
 
 CREATE TABLE `TBL_PRODUCTS` (
@@ -101,6 +123,9 @@ CREATE TABLE `TBL_PRODUCTS` (
 	`PRODUCT_MOD_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '수정일시'
 );
 
+-- =======================================================================
+-- TBL_PEOPLE : 인물
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_PEOPLE`;
 
 CREATE TABLE `TBL_PEOPLE` (
@@ -109,6 +134,9 @@ CREATE TABLE `TBL_PEOPLE` (
 	`PROFILE_URL`	VARCHAR(255)	NULL	COMMENT '프로필 이미지 URL'
 );
 
+-- =======================================================================
+-- TBL_COUPONS : 쿠폰
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_COUPONS`;
 
 CREATE TABLE `TBL_COUPONS` (
@@ -120,6 +148,9 @@ CREATE TABLE `TBL_COUPONS` (
 	`ACTIVE_FG`	INT	NOT NULL	DEFAULT 1	COMMENT '활성 여부 플래그'
 );
 
+-- =======================================================================
+-- TBL_PRODUCT_CATEGORIES : 상품 카테고리
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_PRODUCT_CATEGORIES`;
 
 CREATE TABLE `TBL_PRODUCT_CATEGORIES` (
@@ -127,6 +158,9 @@ CREATE TABLE `TBL_PRODUCT_CATEGORIES` (
 	`PRODUCT_CTGRY_NM`	VARCHAR(100)	NOT NULL	COMMENT '상품 카테고리명 (한글, 음식/음료/굿즈/패키지)'
 );
 
+-- =======================================================================
+-- TBL_GENRES : 장르
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_GENRES`;
 
 CREATE TABLE `TBL_GENRES` (
@@ -134,6 +168,9 @@ CREATE TABLE `TBL_GENRES` (
 	`GENRE_NM`	VARCHAR(50)	NOT NULL	COMMENT '장르명 (한글)'
 );
 
+-- =======================================================================
+-- TBL_PRODUCT_VARIANTS : 상품 옵션
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_PRODUCT_VARIANTS`;
 
 CREATE TABLE `TBL_PRODUCT_VARIANTS` (
@@ -146,6 +183,9 @@ CREATE TABLE `TBL_PRODUCT_VARIANTS` (
 	`VARIANT_GUMAE_LIMIT`	INT	NULL	DEFAULT 1	COMMENT '1인당 구매 가능 수'
 );
 
+-- =======================================================================
+-- TBL_CARTS : 장바구니
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_CARTS`;
 
 CREATE TABLE `TBL_CARTS` (
@@ -155,6 +195,9 @@ CREATE TABLE `TBL_CARTS` (
 	`CART_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '추가된 일시'
 );
 
+-- =======================================================================
+-- TBL_POST_IMAGES : 게시글 이미지
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_POST_IMAGES`;
 
 CREATE TABLE `TBL_POST_IMAGES` (
@@ -164,6 +207,9 @@ CREATE TABLE `TBL_POST_IMAGES` (
 	`UPLOAD_ORD`	INT	NOT NULL	COMMENT '이미지 표시 순서'
 );
 
+-- =======================================================================
+-- TBL_GFC_SEND : 기프티콘 발송
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_GFC_SEND`;
 
 CREATE TABLE `TBL_GFC_SEND` (
@@ -175,6 +221,9 @@ CREATE TABLE `TBL_GFC_SEND` (
 	`SENT_DTTM`	DATETIME	NULL	COMMENT '발송 완료 일시'
 );
 
+-- =======================================================================
+-- TBL_USER_SOCIAL_ACCOUNTS : 회원 소셜 계정
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_USER_SOCIAL_ACCOUNTS`;
 
 CREATE TABLE `TBL_USER_SOCIAL_ACCOUNTS` (
@@ -184,6 +233,9 @@ CREATE TABLE `TBL_USER_SOCIAL_ACCOUNTS` (
 	`PROVIDER_ID`	VARCHAR(255)	NOT NULL	COMMENT '소셜 제공자가 발급한 고유 ID'
 );
 
+-- =======================================================================
+-- TBL_MOVIE_CAST : 영화 출연진
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_MOVIE_CAST`;
 
 CREATE TABLE `TBL_MOVIE_CAST` (
@@ -193,6 +245,9 @@ CREATE TABLE `TBL_MOVIE_CAST` (
 	`CHARACTER_NM`	VARCHAR(50)	NOT NULL	COMMENT '극중 배역 이름'
 );
 
+-- =======================================================================
+-- TBL_PRODUCT_TYPE : 상품 타입
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_PRODUCT_TYPE`;
 
 CREATE TABLE `TBL_PRODUCT_TYPE` (
@@ -200,6 +255,9 @@ CREATE TABLE `TBL_PRODUCT_TYPE` (
 	`PRODUCT_TYPE_NM`	VARCHAR(100)	NOT NULL	COMMENT '상품 카테고리명 (한글, 실물/기프티콘)'
 );
 
+-- =======================================================================
+-- TBL_ORDER_HISTORY : 주문 이력
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_ORDER_HISTORY`;
 
 CREATE TABLE `TBL_ORDER_HISTORY` (
@@ -210,6 +268,9 @@ CREATE TABLE `TBL_ORDER_HISTORY` (
 	`ORD_HIST_REASON`	VARCHAR(255)	NULL	COMMENT '변경 사유'
 );
 
+-- =======================================================================
+-- TBL_MOVIE_GENRES : 영화 장르
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_MOVIE_GENRES`;
 
 CREATE TABLE `TBL_MOVIE_GENRES` (
@@ -217,6 +278,9 @@ CREATE TABLE `TBL_MOVIE_GENRES` (
 	`MOVIE_CD`	INT	NOT NULL	COMMENT '영화 코드 (PK, FK)'
 );
 
+-- =======================================================================
+-- TBL_REPORTS : 신고
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_REPORTS`;
 
 CREATE TABLE `TBL_REPORTS` (
@@ -229,6 +293,9 @@ CREATE TABLE `TBL_REPORTS` (
 	`REPORT_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '신고일시'
 );
 
+-- =======================================================================
+-- TBL_USER_COUPONS : 회원 보유 쿠폰
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_USER_COUPONS`;
 
 CREATE TABLE `TBL_USER_COUPONS` (
@@ -240,6 +307,19 @@ CREATE TABLE `TBL_USER_COUPONS` (
 	`EXPIRE_DTTM`	DATETIME	NOT NULL	COMMENT '만료일시'
 );
 
+-- =======================================================================
+-- TBL_COUPON_DISCOUNT_GB : 쿠폰 할인 구분
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_COUPON_DISCOUNT_GB`;
+
+CREATE TABLE `TBL_COUPON_DISCOUNT_GB` (
+	`DISCOUNT_GB`	INT	NOT NULL	COMMENT '할인 구분',
+	`DISCOUNT_VAL`	INT	NOT NULL	COMMENT '할인 데이터'
+);
+
+-- =======================================================================
+-- TBL_VARIANT_SALE_GB : 상품 판매 구분
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_VARIANT_SALE_GB`;
 
 CREATE TABLE `TBL_VARIANT_SALE_GB` (
@@ -247,6 +327,9 @@ CREATE TABLE `TBL_VARIANT_SALE_GB` (
 	`VARIANT_SALE_GB_NM`	VARCHAR(255)	NOT NULL	COMMENT '판매 구분 이름(판매중/품절/판매종료)'
 );
 
+-- =======================================================================
+-- TBL_MOVIES : 영화
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_MOVIES`;
 
 CREATE TABLE `TBL_MOVIES` (
@@ -259,6 +342,19 @@ CREATE TABLE `TBL_MOVIES` (
 	`POSTER_URL`	VARCHAR(255)	NULL	COMMENT '포스터 이미지 URL'
 );
 
+-- =======================================================================
+-- TBL_GFC_SEND_ST : 기프티콘 발송 상태
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_GFC_SEND_ST`;
+
+CREATE TABLE `TBL_GFC_SEND_ST` (
+	`GFC_SEND_ST_CD`	INT	NOT NULL	COMMENT '기프티콘 발송 상태 코드(PK)',
+	`GFC_SEND_ST_NM`	VARCHAR(50)	NOT NULL	DEFAULT '결제완료'	COMMENT '결제완료/발송대기/발송완료/발송실패'
+);
+
+-- =======================================================================
+-- TBL_DELIVERY_PHY : 실물 배송
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_DELIVERY_PHY`;
 
 CREATE TABLE `TBL_DELIVERY_PHY` (
@@ -268,6 +364,9 @@ CREATE TABLE `TBL_DELIVERY_PHY` (
 	`TRACKING_NO`	VARCHAR(100)	NULL	COMMENT '운송장 번호'
 );
 
+-- =======================================================================
+-- TBL_GFC_ORDER : 기프티콘 주문
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_GFC_ORDER`;
 
 CREATE TABLE `TBL_GFC_ORDER` (
@@ -277,6 +376,9 @@ CREATE TABLE `TBL_GFC_ORDER` (
 	`RECIPT_EMAIL`	VARCHAR(50)	NULL	COMMENT '수령자 이메일'
 );
 
+-- =======================================================================
+-- TBL_REPORT_GB : 신고 구분
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_REPORT_GB`;
 
 CREATE TABLE `TBL_REPORT_GB` (
@@ -284,6 +386,9 @@ CREATE TABLE `TBL_REPORT_GB` (
 	`REPORT_GB_NM`	VARCHAR(50)	NOT NULL	COMMENT '신고 구분명 (한글) 게시글/댓글/리뷰'
 );
 
+-- =======================================================================
+-- TBL_ORDERS : 주문
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_ORDERS`;
 
 CREATE TABLE `TBL_ORDERS` (
@@ -295,6 +400,9 @@ CREATE TABLE `TBL_ORDERS` (
 	`ORDER_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '주문일시'
 );
 
+-- =======================================================================
+-- TBL_PRODUCTS_GOODS_SPECS : 굿즈 상품 상세
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_PRODUCTS_GOODS_SPECS`;
 
 CREATE TABLE `TBL_PRODUCTS_GOODS_SPECS` (
@@ -305,6 +413,9 @@ CREATE TABLE `TBL_PRODUCTS_GOODS_SPECS` (
 	`GOODS_REG_DTTM`	DATETIME	NULL	COMMENT '출시일'
 );
 
+-- =======================================================================
+-- TBL_USERS : 회원
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_USERS`;
 
 CREATE TABLE `TBL_USERS` (
@@ -320,11 +431,14 @@ CREATE TABLE `TBL_USERS` (
 	`USER_NM`	VARCHAR(50)	NULL	COMMENT '실명',
 	`USER_TEL`	VARCHAR(20)	NULL	COMMENT '전화번호',
 	`USER_BIRTH_DT`	DATE	NULL	COMMENT '생년월일',
-	`USER_SEX_GB`	CHAR(1)	NULL	COMMENT '성별 구분 (M, F)',
+	`USER_SEX_GB`	CHAR(1)	NULL	COMMENT '성별 구분 (M,F)',
 	`USER_JUSO`	VARCHAR(255)	NULL	COMMENT '주소',
 	`USER_JUSO_D`	VARCHAR(255)	NULL	COMMENT '상세주소'
 );
 
+-- =======================================================================
+-- TBL_ORDER_PHY : 실물 주문
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_ORDER_PHY`;
 
 CREATE TABLE `TBL_ORDER_PHY` (
@@ -337,6 +451,9 @@ CREATE TABLE `TBL_ORDER_PHY` (
 	`SHIPPING_JUSO_D`	VARCHAR(255)	NULL	COMMENT '배송 상세주소'
 );
 
+-- =======================================================================
+-- TBL_INQUIRIES : 1:1 문의
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_INQUIRIES`;
 
 CREATE TABLE `TBL_INQUIRIES` (
@@ -351,6 +468,9 @@ CREATE TABLE `TBL_INQUIRIES` (
 	`ANSWERED_DTTM`	DATETIME	NULL	DEFAULT NOW()	COMMENT '답변 완료일시'
 );
 
+-- =======================================================================
+-- TBL_PRODUCTS_FOOD_SPECS : 음식 상품 상세
+-- =======================================================================
 DROP TABLE IF EXISTS `TBL_PRODUCTS_FOOD_SPECS`;
 
 CREATE TABLE `TBL_PRODUCTS_FOOD_SPECS` (
@@ -360,27 +480,9 @@ CREATE TABLE `TBL_PRODUCTS_FOOD_SPECS` (
 	`FOOD_WEIGHT`	VARCHAR(50)	NULL	COMMENT '중량/용량'
 );
 
-DROP TABLE IF EXISTS `TBL_GFC_SEND_TYPE`;
-
-CREATE TABLE `TBL_GFC_SEND_TYPE` (
-	`GFC_SEND_TYPE_CD`	INT	NOT NULL	COMMENT '기프티콘 발송 방법 코드(PK)',
-	`GFC_SEND_TYPE_NM`	VARCHAR(50)	NOT NULL	COMMENT 'SMS /MMS/EMAIL'
-);
-
-DROP TABLE IF EXISTS `TBL_GFC_SEND_ST`;
-
-CREATE TABLE `TBL_GFC_SEND_ST` (
-	`GFC_SEND_ST_CD`	INT	NOT NULL	COMMENT '기프티콘 발송 상태 코드(PK)',
-	`GFC_SEND_ST_NM`	VARCHAR(50)	NOT NULL	DEFAULT '결제완료'	COMMENT '결제완료/발송대기/발송완료/발송실패'
-);
-
-DROP TABLE IF EXISTS `TBL_COUPON_DISCOUNT_GB`;
-
-CREATE TABLE `TBL_COUPON_DISCOUNT_GB` (
-	`DISCOUNT_GB`	INT	NOT NULL	COMMENT '할인 구분',
-	`DISCOUNT_VAL`	INT	NOT NULL	COMMENT '할인 데이터'
-);
-
+-- =======================================================================
+-- 제약 조건(PK, FK) 설정
+-- =======================================================================
 ALTER TABLE `TBL_REVIEWS` ADD CONSTRAINT `PK_TBL_REVIEWS` PRIMARY KEY (
 	`REVIEW_CD`
 );
@@ -404,6 +506,10 @@ ALTER TABLE `TBL_ORDER_DETAILS` ADD CONSTRAINT `PK_TBL_ORDER_DETAILS` PRIMARY KE
 
 ALTER TABLE `TBL_ST_PHY` ADD CONSTRAINT `PK_TBL_ST_PHY` PRIMARY KEY (
 	`ST_PHY_CD`
+);
+
+ALTER TABLE `TBL_GFC_SEND_TYPE` ADD CONSTRAINT `PK_TBL_GFC_SEND_TYPE` PRIMARY KEY (
+	`GFC_SEND_TYPE_CD`
 );
 
 ALTER TABLE `TBL_NOTIFICATIONS` ADD CONSTRAINT `PK_TBL_NOTIFICATIONS` PRIMARY KEY (
@@ -485,12 +591,20 @@ ALTER TABLE `TBL_USER_COUPONS` ADD CONSTRAINT `PK_TBL_USER_COUPONS` PRIMARY KEY 
 	`USER_COUPON_CD`
 );
 
+ALTER TABLE `TBL_COUPON_DISCOUNT_GB` ADD CONSTRAINT `PK_TBL_COUPON_DISCOUNT_GB` PRIMARY KEY (
+	`DISCOUNT_GB`
+);
+
 ALTER TABLE `TBL_VARIANT_SALE_GB` ADD CONSTRAINT `PK_TBL_VARIANT_SALE_GB` PRIMARY KEY (
 	`VARIANT_SALE_GB`
 );
 
 ALTER TABLE `TBL_MOVIES` ADD CONSTRAINT `PK_TBL_MOVIES` PRIMARY KEY (
 	`MOVIE_CD`
+);
+
+ALTER TABLE `TBL_GFC_SEND_ST` ADD CONSTRAINT `PK_TBL_GFC_SEND_ST` PRIMARY KEY (
+	`GFC_SEND_ST_CD`
 );
 
 ALTER TABLE `TBL_DELIVERY_PHY` ADD CONSTRAINT `PK_TBL_DELIVERY_PHY` PRIMARY KEY (
@@ -527,18 +641,6 @@ ALTER TABLE `TBL_INQUIRIES` ADD CONSTRAINT `PK_TBL_INQUIRIES` PRIMARY KEY (
 
 ALTER TABLE `TBL_PRODUCTS_FOOD_SPECS` ADD CONSTRAINT `PK_TBL_PRODUCTS_FOOD_SPECS` PRIMARY KEY (
 	`PRODUCT_CD`
-);
-
-ALTER TABLE `TBL_GFC_SEND_TYPE` ADD CONSTRAINT `PK_TBL_GFC_SEND_TYPE` PRIMARY KEY (
-	`GFC_SEND_TYPE_CD`
-);
-
-ALTER TABLE `TBL_GFC_SEND_ST` ADD CONSTRAINT `PK_TBL_GFC_SEND_ST` PRIMARY KEY (
-	`GFC_SEND_ST_CD`
-);
-
-ALTER TABLE `TBL_COUPON_DISCOUNT_GB` ADD CONSTRAINT `PK_TBL_COUPON_DISCOUNT_GB` PRIMARY KEY (
-	`DISCOUNT_GB`
 );
 
 ALTER TABLE `TBL_REVIEWS` ADD CONSTRAINT `FK_TBL_USERS_TO_TBL_REVIEWS_1` FOREIGN KEY (
@@ -841,6 +943,3 @@ ALTER TABLE `TBL_PRODUCTS_FOOD_SPECS` ADD CONSTRAINT `FK_TBL_PRODUCTS_TO_TBL_PRO
 REFERENCES `TBL_PRODUCTS` (
 	`PRODUCT_CD`
 );
-
-SET FOREIGN_KEY_CHECKS = 1;
-
