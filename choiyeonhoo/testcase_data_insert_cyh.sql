@@ -1,0 +1,98 @@
+
+DELIMITER $$
+
+CREATE OR REPLACE PROCEDURE INPUT_DATA()
+
+BEGIN
+# 1. 회원 정보 입력
+INSERT INTO TBL_USERS (
+    USER_CD, USER_ID, USER_PW, USER_NICK_NM, USER_EMAIL,
+    USER_LV, USER_ST, USER_REG_DTTM, USER_MOD_DTTM,
+    USER_NM, USER_TEL
+) VALUES (
+    1001, 'testuser01', 'Test1234!', '최테스터', 'testuser01@example.com',
+    1, 'ACTIVE', NOW(), NOW(),
+    '최테스터', '010-1234-5678'
+);
+#2. 상품 카테고리 입력
+
+INSERT INTO TBL_PRODUCT_CATEGORIES (PRODUCT_CTGRY_CD, PRODUCT_CTGRY_NM) VALUES
+(1, 'FOOD'),
+(2, 'DRINK'),
+(3, 'GOODS'),
+(4, 'PACKAGE');
+
+# 3. 상품 타입 입력
+INSERT INTO TBL_PRODUCT_TYPE (PRODUCT_TYPE_CD, PRODUCT_TYPE_NM) VALUES
+(1, 'PHYSICAL'),
+(2, 'GIFTICON');
+
+# 4. 상품 입력
+INSERT INTO TBL_PRODUCTS (
+    PRODUCT_CD, PRODUCT_TYPE_CD, PRODUCT_CTGRY_CD,
+    PRODUCT_NM, PRODUCT_PRICE_AMT, PRODUCT_IMG_URL,
+    PRODUCT_REG_DTTM, PRODUCT_MOD_DTTM
+) VALUES
+(101, 1, 3, '티셔츠(화이트)', 25000, '/img/tshirt_white.png', NOW(), NOW()),
+(105, 1, 3, '티셔츠(블랙)', 25000, '/img/tshirt_white.png', NOW(), NOW()),
+(102, 2, 2, '콜라 Zero', 3000, '/img/coke_zero.png', NOW(), NOW()),
+(103, 2, 1, '팝콘(카라멜)', 5000, '/img/popcorn_car.png', NOW(), NOW()),
+(104, 2, 4, '영화관 패키지(팝콘+음료)', 15000, '/img/package_set.png', NOW(), NOW());
+
+# 5. 상품 판매 구분 코드
+
+INSERT INTO TBL_VARIANT_SALE_GB (VARIANT_SALE_GB, VARIANT_SALE_GB_NM)
+VALUES
+(1, '판매중'),
+(2, '품절'),
+(3, '판매종료');
+
+# 6. 상품 옵션 입력
+INSERT INTO TBL_PRODUCT_VARIANTS (
+    VARIANT_CD, PRODUCT_CD, VARIANT_SALE_GB,
+    VARIANT_NM, VARIANT_ADD_PRICE_AMT,
+    VARIANT_STOCK_CNT, VARIANT_GUMAE_LIMIT
+) VALUES
+(201, 101, 1, 'SIZE=L', 0, 50, 1),
+(202, 101, 1, 'SIZE=M', 0, 30, 1),
+(203, 102, 1, 'SIZE=REGULAR', 0, 99999, 1),
+(204, 103, 1, 'SIZE=LARGE', 0, 99999, 1),
+(205, 104, 1, '구성=팝콘+콜라', 0, 99999, 1);
+
+# 7. 장바구니 입력
+INSERT INTO TBL_CARTS (
+    USER_CD, VARIANT_CD, CART_QTY_CNT, CART_REG_DTTM
+) VALUES (
+    1001, 201, 1, NOW()
+);
+
+# 8. 배송 상태 코드 입력
+INSERT INTO TBL_ST_PHY (ST_PHY_CD, ST_PHY_NM)
+VALUES
+(1, '결제완료'),
+(2, '상품준비중'),
+(3, '배송출발'),
+(4, '배송중'),
+(5, '배송완료')
+ON DUPLICATE KEY UPDATE ST_PHY_NM = VALUES(ST_PHY_NM);
+
+# 9. 기프티콘 발송 상태 코드 입력
+INSERT INTO TBL_GFC_SEND_ST (GFC_SEND_ST_CD, GFC_SEND_ST_NM)
+VALUES
+(1, '결제완료'),
+(2, '발송대기'),
+(3, '발송완료'),
+(4, '발송실패')
+ON DUPLICATE KEY UPDATE GFC_SEND_ST_NM = VALUES(GFC_SEND_ST_NM);
+
+# 10. 기프티콘 발송 방식 코드
+INSERT INTO TBL_GFC_SEND_TYPE (GFC_SEND_TYPE_CD, GFC_SEND_TYPE_NM)
+VALUES
+(1, 'SMS'),
+(2, 'MMS'),
+(3, 'EMAIL')
+ON DUPLICATE KEY UPDATE GFC_SEND_TYPE_NM = VALUES(GFC_SEND_TYPE_NM);
+
+
+END $$
+DELIMITER ;
