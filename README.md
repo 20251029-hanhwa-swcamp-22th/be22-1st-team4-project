@@ -137,14 +137,6 @@
 ---
 
 ## 🗃️ 9. 데이터 모델링 (Data Modeling)
-### 9-1. 논리 모델링 (Logical Data Model)
-<!-- 논리 모델링 이미지 또는 다이어그램을 여기에 삽입 (예: img/logical_model.png) -->
-<div align="center">
-<img src="./img/logical_model.png" alt="논리 모델링 다이어그램" width="700" />
-</div>
-
-### 9-2. 물리 모델링 (Physical Data Model)
-<!-- 물리 모델링 이미지 또는 다이어그램을 여기에 삽입 (예: img/physical_model.png) -->
 <div align="center">
 <img src="./img/physical_model.png" alt="물리 모델링 다이어그램" width="700" />
 </div>
@@ -153,7 +145,6 @@
 
 ## 📋 10. 테이블 구조 (Table Structure)
 프로젝트에서 사용되는 전체 테이블의 상세 구조입니다.
-
 ### 10-1. 회원 및 권한
 #### TBL_USERS
 | 컬럼명 | 데이터 타입 | 제약 조건 | 설명 |
@@ -491,6 +482,549 @@
 | MOVIE_CD | INT | PFK, NOT NULL | 영화 코드 (PK, FK) |
 | ROLE_NM | VARCHAR(50) | NOT NULL | 역할 (감독, 주연, 조연) |
 | CHARACTER_NM | VARCHAR(50) | NOT NULL | 극중 배역 이름 |
+
+<details><summary><b> 테이블정의서(DDL) </b></summary>
+<br>
+  
+```sql
+-- =======================================================================
+-- 제약 조건 설정을 위해 잠시 FK 체크를 비활성화합니다.
+-- =======================================================================
+SET foreign_key_checks = 0;
+
+-- =======================================================================
+-- TBL_USERS : 회원
+-- USER_ST 컬럼을 통해 논리적 삭제(Soft Delete)를 구현합니다.
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_USERS`;
+CREATE TABLE `TBL_USERS` (
+	`USER_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '회원 코드 (PK)',
+	`USER_ID`	VARCHAR(50)	NOT NULL	COMMENT '회원 아이디',
+	`USER_PW`	VARCHAR(255)	NULL	COMMENT '비밀번호 (해싱 저장, 소셜로그인 시 NULL)',
+	`USER_NICK_NM`	VARCHAR(50)	NOT NULL	COMMENT '닉네임',
+	`USER_EMAIL`	VARCHAR(100)	NOT NULL	COMMENT '이메일',
+	`USER_LV`	INT	NOT NULL	DEFAULT 1	COMMENT '회원 레벨 (1-4=일반, 5=관리자)',
+	`USER_ST`	VARCHAR(20)	NOT NULL	DEFAULT 'ACTIVE'	COMMENT '계정 상태 (ACTIVE, DORMANT, BANNED, DELETED)',
+	`USER_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '가입일시',
+	`USER_MOD_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '마지막 정보 수정일시',
+	`USER_NM`	VARCHAR(50)	NULL	COMMENT '실명',
+	`USER_TEL`	VARCHAR(20)	NULL	COMMENT '전화번호',
+	`USER_BIRTH_DT`	DATE	NULL	COMMENT '생년월일',
+	`USER_SEX_GB`	CHAR(1)	NULL	COMMENT '성별 구분 (M,F)',
+	`USER_JUSO`	VARCHAR(255)	NULL	COMMENT '주소',
+	`USER_JUSO_D`	VARCHAR(255)	NULL	COMMENT '상세주소',
+	CONSTRAINT `PK_TBL_USERS` PRIMARY KEY (`USER_CD`)
+);
+
+-- =======================================================================
+-- TBL_PRODUCT_CATEGORIES : 상품 카테고리
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_PRODUCT_CATEGORIES`;
+CREATE TABLE `TBL_PRODUCT_CATEGORIES` (
+	`PRODUCT_CTGRY_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '상품 카테고리 코드 (PK)',
+	`PRODUCT_CTGRY_NM`	VARCHAR(100)	NOT NULL	COMMENT '상품 카테고리명 (한글, 음식/음료/굿즈/패키지)',
+	CONSTRAINT `PK_TBL_PRODUCT_CATEGORIES` PRIMARY KEY (`PRODUCT_CTGRY_CD`)
+);
+
+-- =======================================================================
+-- TBL_PRODUCT_TYPE : 상품 타입
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_PRODUCT_TYPE`;
+CREATE TABLE `TBL_PRODUCT_TYPE` (
+	`PRODUCT_TYPE_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '상품  타입 코드 (PK)',
+	`PRODUCT_TYPE_NM`	VARCHAR(100)	NOT NULL	COMMENT '상품 타입명 (한글, 실물/기프티콘)',
+	CONSTRAINT `PK_TBL_PRODUCT_TYPE` PRIMARY KEY (`PRODUCT_TYPE_CD`)
+);
+
+-- =======================================================================
+-- TBL_PRODUCTS : 상품
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_PRODUCTS`;
+CREATE TABLE `TBL_PRODUCTS` (
+	`PRODUCT_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '상품 코드 (PK)',
+	`PRODUCT_TYPE_CD`	INT	NOT NULL	COMMENT '상품 타입 코드 (FK)',
+	`PRODUCT_CTGRY_CD`	INT	NOT NULL	COMMENT '상품 카테고리 코드 (FK)',
+	`PRODUCT_NM`	VARCHAR(255)	NOT NULL	COMMENT '상품명',
+	`PRODUCT_PRICE_AMT`	INT	NOT NULL	COMMENT '기본 가격',
+	`PRODUCT_IMG_URL`	VARCHAR(255)	NULL	COMMENT '대표 이미지 URL',
+	`PRODUCT_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '등록일시',
+	`PRODUCT_MOD_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '수정일시',
+	CONSTRAINT `PK_TBL_PRODUCTS` PRIMARY KEY (`PRODUCT_CD`),
+	CONSTRAINT `FK_TBL_PRODUCT_TYPE_TO_TBL_PRODUCTS_1` FOREIGN KEY (`PRODUCT_TYPE_CD`) REFERENCES `TBL_PRODUCT_TYPE` (`PRODUCT_TYPE_CD`),
+	CONSTRAINT `FK_TBL_PRODUCT_CATEGORIES_TO_TBL_PRODUCTS_1` FOREIGN KEY (`PRODUCT_CTGRY_CD`) REFERENCES `TBL_PRODUCT_CATEGORIES` (`PRODUCT_CTGRY_CD`)
+);
+
+-- =======================================================================
+-- TBL_PRODUCTS_PACKAGE_SPECS : 패키지 상품 상세
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_PRODUCTS_PACKAGE_SPECS`;
+CREATE TABLE `TBL_PRODUCTS_PACKAGE_SPECS` (
+	`PRODUCT_CD`	INT	NOT NULL	COMMENT '상품 코드 (PFK)',
+	`PRODUCT_LIST`	VARCHAR(500)	NULL	COMMENT '패키지 구성',
+	CONSTRAINT `PK_TBL_PRODUCTS_PACKAGE_SPECS` PRIMARY KEY (`PRODUCT_CD`),
+	CONSTRAINT `FK_TBL_PRODUCTS_TO_TBL_PRODUCTS_PACKAGE_SPECS_1` FOREIGN KEY (`PRODUCT_CD`) REFERENCES `TBL_PRODUCTS` (`PRODUCT_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_PRODUCTS_DRINK_SPECS : 음료 상품 상세
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_PRODUCTS_DRINK_SPECS`;
+CREATE TABLE `TBL_PRODUCTS_DRINK_SPECS` (
+	`PRODUCT_CD`	INT	NOT NULL	COMMENT '상품 코드 (PFK)',
+	`DRINK_SIZE`	VARCHAR(50)	NULL	COMMENT '용량(355ml)',
+	`IS_ZERO`	BOOLEAN	NULL	COMMENT '제로 여부',
+	`DRINK_CONTAINER`	VARCHAR(50)	NULL	COMMENT 'CUP/CAN/PET',
+	`DRINK_MEMO`	VARCHAR(50)	NULL	COMMENT '비고',
+	CONSTRAINT `PK_TBL_PRODUCTS_DRINK_SPECS` PRIMARY KEY (`PRODUCT_CD`),
+	CONSTRAINT `FK_TBL_PRODUCTS_TO_TBL_PRODUCTS_DRINK_SPECS_1` FOREIGN KEY (`PRODUCT_CD`) REFERENCES `TBL_PRODUCTS` (`PRODUCT_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_PRODUCTS_FOOD_SPECS : 음식 상품 상세
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_PRODUCTS_FOOD_SPECS`;
+CREATE TABLE `TBL_PRODUCTS_FOOD_SPECS` (
+	`PRODUCT_CD`	INT	NOT NULL	COMMENT '상품 코드 (PFK)',
+	`FOOD_TASTE`	VARCHAR(50)	NULL	COMMENT '맛',
+	`FOOD_SIZE`	VARCHAR(50)	NULL	COMMENT '사이즈',
+	`FOOD_WEIGHT`	VARCHAR(50)	NULL	COMMENT '중량/용량',
+	CONSTRAINT `PK_TBL_PRODUCTS_FOOD_SPECS` PRIMARY KEY (`PRODUCT_CD`),
+	CONSTRAINT `FK_TBL_PRODUCTS_TO_TBL_PRODUCTS_FOOD_SPECS_1` FOREIGN KEY (`PRODUCT_CD`) REFERENCES `TBL_PRODUCTS` (`PRODUCT_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_PRODUCTS_GOODS_SPECS : 굿즈 상품 상세
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_PRODUCTS_GOODS_SPECS`;
+CREATE TABLE `TBL_PRODUCTS_GOODS_SPECS` (
+	`PRODUCT_CD`	INT	NOT NULL	COMMENT '상품 코드 (PFK)',
+	`GOODS_COMPS`	VARCHAR(255)	NULL	COMMENT '구성품',
+	`GOODS_MATS`	VARCHAR(255)	NULL	COMMENT '재질',
+	`GOODS_SIZE`	VARCHAR(255)	NULL	COMMENT '크기',
+	`GOODS_REG_DTTM`	DATETIME	NULL	COMMENT '출시일',
+	CONSTRAINT `PK_TBL_PRODUCTS_GOODS_SPECS` PRIMARY KEY (`PRODUCT_CD`),
+	CONSTRAINT `FK_TBL_PRODUCTS_TO_TBL_PRODUCTS_GOODS_SPECS_1` FOREIGN KEY (`PRODUCT_CD`) REFERENCES `TBL_PRODUCTS` (`PRODUCT_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_VARIANT_SALE_GB : 상품 판매 구분
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_VARIANT_SALE_GB`;
+CREATE TABLE `TBL_VARIANT_SALE_GB` (
+	`VARIANT_SALE_GB`	INT	NOT NULL AUTO_INCREMENT	COMMENT '판매 구분',
+	`VARIANT_SALE_GB_NM`	VARCHAR(255)	NOT NULL	COMMENT '판매 구분 이름(판매중/품절/판매종료)',
+	CONSTRAINT `PK_TBL_VARIANT_SALE_GB` PRIMARY KEY (`VARIANT_SALE_GB`)
+);
+
+-- =======================================================================
+-- TBL_PRODUCT_VARIANTS : 상품 옵션
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_PRODUCT_VARIANTS`;
+CREATE TABLE `TBL_PRODUCT_VARIANTS` (
+	`VARIANT_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '상품 옵션 코드 (PK)',
+	`PRODUCT_CD`	INT	NOT NULL	COMMENT '상품 코드 (FK)',
+	`VARIANT_SALE_GB`	INT	NOT NULL	COMMENT '판매 구분(FK)',
+	`VARIANT_NM`	VARCHAR(255)	NOT NULL	COMMENT '옵션 조합명',
+	`VARIANT_ADD_PRICE_AMT`	INT	NOT NULL	DEFAULT 0	COMMENT '추가 가격',
+	`VARIANT_STOCK_CNT`	INT	NOT NULL	DEFAULT 0	COMMENT '옵션별 재고 수량',
+	`VARIANT_GUMAE_LIMIT`	INT	NULL	DEFAULT 1	COMMENT '1인당 구매 가능 수',
+	CONSTRAINT `PK_TBL_PRODUCT_VARIANTS` PRIMARY KEY (`VARIANT_CD`),
+	CONSTRAINT `FK_TBL_PRODUCTS_TO_TBL_PRODUCT_VARIANTS_1` FOREIGN KEY (`PRODUCT_CD`) REFERENCES `TBL_PRODUCTS` (`PRODUCT_CD`) ON DELETE CASCADE,
+	CONSTRAINT `FK_TBL_VARIANT_SALE_GB_TO_TBL_PRODUCT_VARIANTS_1` FOREIGN KEY (`VARIANT_SALE_GB`) REFERENCES `TBL_VARIANT_SALE_GB` (`VARIANT_SALE_GB`)
+);
+
+-- =======================================================================
+-- TBL_POST_CATEGORIES : 게시글 카테고리
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_POST_CATEGORIES`;
+CREATE TABLE `TBL_POST_CATEGORIES` (
+	`POST_CTGRY_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '게시글 카테고리 코드 (PK)',
+	`POST_CTGRY_NM`	VARCHAR(50)	NOT NULL	COMMENT '게시글 카테고리명 (한글)',
+	CONSTRAINT `PK_TBL_POST_CATEGORIES` PRIMARY KEY (`POST_CTGRY_CD`)
+);
+
+-- =======================================================================
+-- TBL_POSTS : 게시글
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_POSTS`;
+CREATE TABLE `TBL_POSTS` (
+	`POST_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '게시글 코드 (PK)',
+	`USER_CD`	INT	NULL	COMMENT '회원 코드 (FK), 탈퇴 시 NULL',
+	`POST_CTGRY_CD`	INT	NOT NULL	COMMENT '게시글 카테고리 코드 (FK)',
+	`POST_TT`	VARCHAR(255)	NOT NULL	COMMENT '게시글 제목',
+	`POST_CONT`	VARCHAR(1000)	NOT NULL	COMMENT '게시글 내용',
+	`POST_VIEW_CNT`	INT	NOT NULL	DEFAULT 0	COMMENT '게시글 조회수',
+	`POST_LIKE_CNT`	INT	NOT NULL	DEFAULT 0	COMMENT '게시글 추천 수',
+	`POST_DISLIKE_CNT`	INT	NOT NULL	DEFAULT 0	COMMENT '게시글 비추천 수',
+	`POST_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '게시글 작성일시',
+	`POST_MOD_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '게시글 수정일시',
+	CONSTRAINT `PK_TBL_POSTS` PRIMARY KEY (`POST_CD`),
+	CONSTRAINT `FK_TBL_USERS_TO_TBL_POSTS_1` FOREIGN KEY (`USER_CD`) REFERENCES `TBL_USERS` (`USER_CD`) ON DELETE SET NULL,
+	CONSTRAINT `FK_TBL_POST_CATEGORIES_TO_TBL_POSTS_1` FOREIGN KEY (`POST_CTGRY_CD`) REFERENCES `TBL_POST_CATEGORIES` (`POST_CTGRY_CD`)
+);
+
+-- =======================================================================
+-- TBL_COMMENT : 댓글
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_COMMENT`;
+CREATE TABLE `TBL_COMMENT` (
+	`COMMENT_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '댓글 코드 (PK)',
+	`USER_CD`	INT	NULL	COMMENT '회원 코드 (FK), 탈퇴 시 NULL',
+	`POST_CD`	INT	NOT NULL	COMMENT '게시글 코드 (FK)',
+	`COMMENT_CONT`	VARCHAR(1000)	NOT NULL	COMMENT '댓글내용',
+	`COMMENT_ST`	INT	NOT NULL	DEFAULT 1	COMMENT '댓글 상태(1= ACTIVE, 0=DELTED)',
+	`COMMENT_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '댓글 작성일시',
+	`COMMENT_MOD_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '댓글 수정일시',
+	CONSTRAINT `PK_TBL_COMMENT` PRIMARY KEY (`COMMENT_CD`),
+	CONSTRAINT `FK_TBL_USERS_TO_TBL_COMMENT_1` FOREIGN KEY (`USER_CD`) REFERENCES `TBL_USERS` (`USER_CD`) ON DELETE SET NULL,
+	CONSTRAINT `FK_TBL_POSTS_TO_TBL_COMMENT_1` FOREIGN KEY (`POST_CD`) REFERENCES `TBL_POSTS` (`POST_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_POST_IMAGES : 게시글 이미지
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_POST_IMAGES`;
+CREATE TABLE `TBL_POST_IMAGES` (
+	`POST_IMAGE_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '게시글 이미지 코드 (PK)',
+	`POST_CD`	INT	NOT NULL	COMMENT '게시글 코드 (FK)',
+	`IMG_URL`	VARCHAR(255)	NOT NULL	COMMENT '이미지 저장 URL',
+	`UPLOAD_ORD`	INT	NOT NULL	COMMENT '이미지 표시 순서',
+	CONSTRAINT `PK_TBL_POST_IMAGES` PRIMARY KEY (`POST_IMAGE_CD`),
+	CONSTRAINT `FK_TBL_POSTS_TO_TBL_POST_IMAGES_1` FOREIGN KEY (`POST_CD`) REFERENCES `TBL_POSTS` (`POST_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_COUPON_DISCOUNT_GB : 쿠폰 할인 구분
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_COUPON_DISCOUNT_GB`;
+CREATE TABLE `TBL_COUPON_DISCOUNT_GB` (
+	`DISCOUNT_GB`	INT	NOT NULL AUTO_INCREMENT	COMMENT '할인 구분',
+	`DISCOUNT_VAL`	INT	NOT NULL	COMMENT '할인 데이터',
+	CONSTRAINT `PK_TBL_COUPON_DISCOUNT_GB` PRIMARY KEY (`DISCOUNT_GB`)
+);
+
+-- =======================================================================
+-- TBL_COUPONS : 쿠폰
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_COUPONS`;
+CREATE TABLE `TBL_COUPONS` (
+	`COUPON_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '쿠폰 코드 (PK)',
+	`DISCOUNT_GB`	INT	NULL	COMMENT '할인 구분 코드  (FK)',
+	`COUPON_NM`	VARCHAR(100)	NOT NULL	COMMENT '쿠폰 이름',
+	`VALID_START_DTTM`	DATETIME	NOT NULL	COMMENT '유효 시작일시',
+	`VALID_END_DTTM`	DATETIME	NOT NULL	COMMENT '유효 종료일시',
+	`ACTIVE_FG`	INT	NOT NULL	DEFAULT 1	COMMENT '활성 여부 플래그',
+	CONSTRAINT `PK_TBL_COUPONS` PRIMARY KEY (`COUPON_CD`),
+	CONSTRAINT `FK_TBL_COUPON_DISCOUNT_GB_TO_TBL_COUPONS_1` FOREIGN KEY (`DISCOUNT_GB`) REFERENCES `TBL_COUPON_DISCOUNT_GB` (`DISCOUNT_GB`)
+);
+
+-- =======================================================================
+-- TBL_USER_COUPONS : 회원 보유 쿠폰
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_USER_COUPONS`;
+CREATE TABLE `TBL_USER_COUPONS` (
+	`USER_COUPON_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '회원 보유 쿠폰 코드 (PK)',
+	`USER_CD`	INT	NOT NULL	COMMENT '회원 코드 (FK)',
+	`COUPON_CD`	INT	NOT NULL	COMMENT '쿠폰 코드 (FK)',
+	`COUPON_ST`	VARCHAR(20)	NOT NULL	DEFAULT 'AVAILABLE'	COMMENT '쿠폰 상태 (AVAILABLE, USED, EXPIRED)',
+	`ISSUE_DTTM`	DATETIME	NOT NULL	COMMENT '발급일시',
+	`EXPIRE_DTTM`	DATETIME	NOT NULL	COMMENT '만료일시',
+	CONSTRAINT `PK_TBL_USER_COUPONS` PRIMARY KEY (`USER_COUPON_CD`),
+	CONSTRAINT `FK_TBL_USERS_TO_TBL_USER_COUPONS_1` FOREIGN KEY (`USER_CD`) REFERENCES `TBL_USERS` (`USER_CD`) ON DELETE CASCADE,
+	CONSTRAINT `FK_TBL_COUPONS_TO_TBL_USER_COUPONS_1` FOREIGN KEY (`COUPON_CD`) REFERENCES `TBL_COUPONS` (`COUPON_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_ORDERS : 주문
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_ORDERS`;
+CREATE TABLE `TBL_ORDERS` (
+	`ORDER_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '주문 코드(PK)',
+	`USER_CD`	INT	NOT NULL	COMMENT '회원 코드 (FK)',
+	`PRODUCT_TYPE_CD`	INT	NOT NULL	COMMENT '상품 타입 코드 (FK)',
+	`COUPON_CD`	INT	NULL	COMMENT '적용된 쿠폰 코드 (FK)',
+	`ORDER_TOTAL_PRICE_AMT`	INT	NOT NULL	COMMENT '총 결제금액',
+	`ORDER_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '주문일시',
+	CONSTRAINT `PK_TBL_ORDERS` PRIMARY KEY (`ORDER_CD`),
+	CONSTRAINT `FK_TBL_USERS_TO_TBL_ORDERS_1` FOREIGN KEY (`USER_CD`) REFERENCES `TBL_USERS` (`USER_CD`) ON DELETE RESTRICT,
+	CONSTRAINT `FK_TBL_PRODUCT_TYPE_TO_TBL_ORDERS_1` FOREIGN KEY (`PRODUCT_TYPE_CD`) REFERENCES `TBL_PRODUCT_TYPE` (`PRODUCT_TYPE_CD`),
+	CONSTRAINT `FK_TBL_COUPONS_TO_TBL_ORDERS_1` FOREIGN KEY (`COUPON_CD`) REFERENCES `TBL_COUPONS` (`COUPON_CD`) ON DELETE SET NULL
+);
+
+-- =======================================================================
+-- TBL_ORDER_DETAILS : 주문 상세
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_ORDER_DETAILS`;
+CREATE TABLE `TBL_ORDER_DETAILS` (
+	`ORDER_CD`	INT	NOT NULL	COMMENT '주문 코드 (PFK)',
+	`VARIANT_CD`	INT	NOT NULL	COMMENT '상품 옵션 코드 (FK)',
+	`ORD_DETL_QTY_CNT`	INT	NOT NULL	COMMENT '주문 수량',
+	`ORD_DETL_PRICE_AMT`	INT	NOT NULL	COMMENT '개당 가격',
+	CONSTRAINT `PK_TBL_ORDER_DETAILS` PRIMARY KEY (`ORDER_CD`, `VARIANT_CD`),
+	CONSTRAINT `FK_TBL_ORDERS_TO_TBL_ORDER_DETAILS_1` FOREIGN KEY (`ORDER_CD`) REFERENCES `TBL_ORDERS` (`ORDER_CD`) ON DELETE CASCADE,
+	CONSTRAINT `FK_TBL_PRODUCT_VARIANTS_TO_TBL_ORDER_DETAILS_1` FOREIGN KEY (`VARIANT_CD`) REFERENCES `TBL_PRODUCT_VARIANTS` (`VARIANT_CD`)
+);
+
+-- =======================================================================
+-- TBL_ORDER_HISTORY : 주문 이력
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_ORDER_HISTORY`;
+CREATE TABLE `TBL_ORDER_HISTORY` (
+	`ORD_HIST_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '주문 이력 코드 (PK)',
+	`ORDER_CD`	INT	NOT NULL	COMMENT '주문 코드(FK)',
+	`ORD_HIST_ST`	VARCHAR(30)	NOT NULL	COMMENT '변경된 주문 상태',
+	`ORD_HIST_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '상태 변경일시',
+	`ORD_HIST_REASON`	VARCHAR(255)	NULL	COMMENT '변경 사유',
+	CONSTRAINT `PK_TBL_ORDER_HISTORY` PRIMARY KEY (`ORD_HIST_CD`),
+	CONSTRAINT `FK_TBL_ORDERS_TO_TBL_ORDER_HISTORY_1` FOREIGN KEY (`ORDER_CD`) REFERENCES `TBL_ORDERS` (`ORDER_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_ST_PHY : 실물 배송 상태
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_ST_PHY`;
+CREATE TABLE `TBL_ST_PHY` (
+	`ST_PHY_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '실물 배송 상태 코드(PK)',
+	`ST_PHY_NM`	VARCHAR(50)	NOT NULL	DEFAULT '결제완료'	COMMENT '결제완료/준비중/배송출발/배송중/배송완료',
+	CONSTRAINT `PK_TBL_ST_PHY` PRIMARY KEY (`ST_PHY_CD`)
+);
+
+-- =======================================================================
+-- TBL_DELIVERY_PHY : 실물 배송
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_DELIVERY_PHY`;
+CREATE TABLE `TBL_DELIVERY_PHY` (
+	`DELIVERY_PHY_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '실물 배송 코드(PK)',
+	`ST_PHY_CD`	INT	NOT NULL	DEFAULT 1	COMMENT '실물 주문 상태 코드(FK)',
+	`SHIPPING_CO_NM`	VARCHAR(50)	NULL	COMMENT '배송사명',
+	`TRACKING_NO`	VARCHAR(100)	NULL	COMMENT '운송장 번호',
+	CONSTRAINT `PK_TBL_DELIVERY_PHY` PRIMARY KEY (`DELIVERY_PHY_CD`),
+	CONSTRAINT `FK_TBL_ST_PHY_TO_TBL_DELIVERY_PHY_1` FOREIGN KEY (`ST_PHY_CD`) REFERENCES `TBL_ST_PHY` (`ST_PHY_CD`)
+);
+
+-- =======================================================================
+-- TBL_ORDER_PHY : 실물 주문
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_ORDER_PHY`;
+CREATE TABLE `TBL_ORDER_PHY` (
+	`ORDER_CD`	INT	NOT NULL	COMMENT '주문 코드(PFK)',
+	`DELIVERY_PHY_CD`	INT	NOT NULL	COMMENT '실물 배송 코드(FK)',
+	`RECIPIENT_NM`	VARCHAR(50)	NULL	COMMENT '수취인 이름',
+	`RECIPIENT_TEL_NO`	VARCHAR(20)	NULL	COMMENT '수취인 연락처',
+	`SHIPPING_UPYEON`	VARCHAR(10)	NULL	COMMENT '배송 우편번호',
+	`SHIPPING_JUSO`	VARCHAR(255)	NULL	COMMENT '배송 주소',
+	`SHIPPING_JUSO_D`	VARCHAR(255)	NULL	COMMENT '배송 상세주소',
+	CONSTRAINT `PK_TBL_ORDER_PHY` PRIMARY KEY (`ORDER_CD`),
+	CONSTRAINT `FK_TBL_ORDERS_TO_TBL_ORDER_PHY_1` FOREIGN KEY (`ORDER_CD`) REFERENCES `TBL_ORDERS` (`ORDER_CD`) ON DELETE CASCADE,
+	CONSTRAINT `FK_TBL_DELIVERY_PHY_TO_TBL_ORDER_PHY_1` FOREIGN KEY (`DELIVERY_PHY_CD`) REFERENCES `TBL_DELIVERY_PHY` (`DELIVERY_PHY_CD`)
+);
+
+-- =======================================================================
+-- TBL_GFC_SEND_ST : 기프티콘 발송 상태
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_GFC_SEND_ST`;
+CREATE TABLE `TBL_GFC_SEND_ST` (
+	`GFC_SEND_ST_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '기프티콘 발송 상태 코드(PK)',
+	`GFC_SEND_ST_NM`	VARCHAR(50)	NOT NULL	DEFAULT '결제완료'	COMMENT '결제완료/발송대기/발송완료/발송실패',
+	CONSTRAINT `PK_TBL_GFC_SEND_ST` PRIMARY KEY (`GFC_SEND_ST_CD`)
+);
+
+-- =======================================================================
+-- TBL_GFC_SEND_TYPE : 기프티콘 발송 타입
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_GFC_SEND_TYPE`;
+CREATE TABLE `TBL_GFC_SEND_TYPE` (
+	`GFC_SEND_TYPE_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '기프티콘 발송 방법 코드(PK)',
+	`GFC_SEND_TYPE_NM`	VARCHAR(50)	NOT NULL	COMMENT 'SMS/MMS/EMAIL',
+	CONSTRAINT `PK_TBL_GFC_SEND_TYPE` PRIMARY KEY (`GFC_SEND_TYPE_CD`)
+);
+
+-- =======================================================================
+-- TBL_GFC_SEND : 기프티콘 발송
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_GFC_SEND`;
+CREATE TABLE `TBL_GFC_SEND` (
+	`GFC_SEND_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '기프티콘 발송 코드 (PK)',
+	`GFC_SEND_ST_CD`	INT	NULL	COMMENT '기프티콘 발송 상태 코드(FK)',
+	`GFC_SEND_TYPE_CD`	INT	NOT NULL	COMMENT '기프티콘 발송 타입 코드(FK)',
+	`SEND_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '생성일시',
+	`FAIL_REASON`	VARCHAR(255)	NULL	COMMENT '실패 사유',
+	`SENT_DTTM`	DATETIME	NULL	COMMENT '발송 완료 일시',
+	CONSTRAINT `PK_TBL_GFC_SEND` PRIMARY KEY (`GFC_SEND_CD`),
+	CONSTRAINT `FK_TBL_GFC_SEND_ST_TO_TBL_GFC_SEND_1` FOREIGN KEY (`GFC_SEND_ST_CD`) REFERENCES `TBL_GFC_SEND_ST` (`GFC_SEND_ST_CD`),
+	CONSTRAINT `FK_TBL_GFC_SEND_TYPE_TO_TBL_GFC_SEND_1` FOREIGN KEY (`GFC_SEND_TYPE_CD`) REFERENCES `TBL_GFC_SEND_TYPE` (`GFC_SEND_TYPE_CD`)
+);
+
+-- =======================================================================
+-- TBL_GFC_ORDER : 기프티콘 주문
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_GFC_ORDER`;
+CREATE TABLE `TBL_GFC_ORDER` (
+	`ORDER_CD`	INT	NOT NULL	COMMENT '주문 코드(PFK)',
+	`GFC_SEND_CD`	INT	NOT NULL	COMMENT '기프티콘 발송 코드 (FK)',
+	`RECIPT_TEL`	VARCHAR(20)	NULL	COMMENT '수령자 연락처',
+	`RECIPT_EMAIL`	VARCHAR(50)	NULL	COMMENT '수령자 이메일',
+	CONSTRAINT `PK_TBL_GFC_ORDER` PRIMARY KEY (`ORDER_CD`),
+	CONSTRAINT `FK_TBL_ORDERS_TO_TBL_GFC_ORDER_1` FOREIGN KEY (`ORDER_CD`) REFERENCES `TBL_ORDERS` (`ORDER_CD`) ON DELETE CASCADE,
+	CONSTRAINT `FK_TBL_GFC_SEND_TO_TBL_GFC_ORDER_1` FOREIGN KEY (`GFC_SEND_CD`) REFERENCES `TBL_GFC_SEND` (`GFC_SEND_CD`)
+);
+
+-- =======================================================================
+-- TBL_CARTS : 장바구니
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_CARTS`;
+CREATE TABLE `TBL_CARTS` (
+	`USER_CD`	INT	NOT NULL	COMMENT '회원 코드 (PFK)',
+	`VARIANT_CD`	INT	NOT NULL	COMMENT '상품 옵션 코드 (PFK)',
+	`CART_QTY_CNT`	INT	NOT NULL	COMMENT '수량',
+	`CART_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '추가된 일시',
+	CONSTRAINT `PK_TBL_CARTS` PRIMARY KEY (`USER_CD`, `VARIANT_CD`),
+	CONSTRAINT `FK_TBL_USERS_TO_TBL_CARTS_1` FOREIGN KEY (`USER_CD`) REFERENCES `TBL_USERS` (`USER_CD`) ON DELETE CASCADE,
+	CONSTRAINT `FK_TBL_PRODUCT_VARIANTS_TO_TBL_CARTS_1` FOREIGN KEY (`VARIANT_CD`) REFERENCES `TBL_PRODUCT_VARIANTS` (`VARIANT_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_NOTIFICATIONS : 알림
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_NOTIFICATIONS`;
+CREATE TABLE `TBL_NOTIFICATIONS` (
+	`NOTI_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '알림 코드 (PK)',
+	`USER_CD`	INT	NOT NULL	COMMENT '수신자 회원 코드 (FK)',
+	`NOTI_CONT`	VARCHAR(1000)	NOT NULL	COMMENT '알림 내용',
+	`READ_FG`	INT	NOT NULL	DEFAULT 0	COMMENT '읽음 여부 플래그 (0/1)',
+	`NOTI_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '생성일시',
+	CONSTRAINT `PK_TBL_NOTIFICATIONS` PRIMARY KEY (`NOTI_CD`),
+	CONSTRAINT `FK_TBL_USERS_TO_TBL_NOTIFICATIONS_1` FOREIGN KEY (`USER_CD`) REFERENCES `TBL_USERS` (`USER_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_USER_SOCIAL_ACCOUNTS : 회원 소셜 계정
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_USER_SOCIAL_ACCOUNTS`;
+CREATE TABLE `TBL_USER_SOCIAL_ACCOUNTS` (
+	`SOCIAL_ACCOUNT_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '소셜 계정 연동 코드 (PK)',
+	`USER_CD`	INT	NOT NULL	COMMENT '회원 코드 (FK)',
+	`PROVIDER_CD`	VARCHAR(20)	NOT NULL	COMMENT '소셜 제공자 코드 (KAKAO, NAVER)',
+	`PROVIDER_ID`	VARCHAR(255)	NOT NULL	COMMENT '소셜 제공자가 발급한 고유 ID',
+	CONSTRAINT `PK_TBL_USER_SOCIAL_ACCOUNTS` PRIMARY KEY (`SOCIAL_ACCOUNT_CD`),
+	CONSTRAINT `FK_TBL_USERS_TO_TBL_USER_SOCIAL_ACCOUNTS_1` FOREIGN KEY (`USER_CD`) REFERENCES `TBL_USERS` (`USER_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_INQUIRIES : 1:1 문의
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_INQUIRIES`;
+CREATE TABLE `TBL_INQUIRIES` (
+	`INQUIRY_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '문의 코드 (PK)',
+	`USER_CD`	INT	NULL	COMMENT '작성자 회원 코드 (FK), 탈퇴 시 NULL',
+	`INQUIRY_TT`	VARCHAR(255)	NOT NULL	COMMENT '문의 제목',
+	`INQUIRY_CONT`	VARCHAR(1000)	NOT NULL	COMMENT '문의 내용',
+	`ANSWER_FG`	INT	NOT NULL	DEFAULT 0	COMMENT '답변 상태 (0, 1)',
+	`INQUIRY_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '문의 등록일시',
+	`INQUIRY_MOD_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '문의 수정일시',
+	`ANSWER_CONT`	VARCHAR(1000)	NULL	COMMENT '관리자 답변 내용',
+	`ANSWERED_DTTM`	DATETIME	NULL	COMMENT '답변 완료일시',
+	CONSTRAINT `PK_TBL_INQUIRIES` PRIMARY KEY (`INQUIRY_CD`),
+	CONSTRAINT `FK_TBL_USERS_TO_TBL_INQUIRIES_1` FOREIGN KEY (`USER_CD`) REFERENCES `TBL_USERS` (`USER_CD`) ON DELETE SET NULL
+);
+
+-- =======================================================================
+-- TBL_REPORT_GB : 신고 구분
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_REPORT_GB`;
+CREATE TABLE `TBL_REPORT_GB` (
+	`REPORT_GB`	INT	NOT NULL AUTO_INCREMENT	COMMENT '신고 구분 코드 (PK)',
+	`REPORT_GB_NM`	VARCHAR(50)	NOT NULL	COMMENT '신고 구분명 (한글) 게시글/댓글/리뷰',
+	CONSTRAINT `PK_TBL_REPORT_GB` PRIMARY KEY (`REPORT_GB`)
+);
+
+-- =======================================================================
+-- TBL_REPORTS : 신고
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_REPORTS`;
+CREATE TABLE `TBL_REPORTS` (
+	`REPORT_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '신고 코드 (PK)',
+	`REPORT_GB`	INT	NOT NULL	COMMENT '신고 구분 코드 (FK)',
+	`REPORT_USER_CD`	INT	NULL	COMMENT '신고자 코드, 탈퇴 시 NULL',
+	`TARGET_USER_CD`	INT	NULL	COMMENT '신고 대상자 코드, 탈퇴 시 NULL',
+	`REPORT_REASON`	VARCHAR(255)	NOT NULL	COMMENT '신고 사유',
+	`REPORT_ST`	INT	NOT NULL	DEFAULT 0	COMMENT '처리 상태',
+	`REPORT_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '신고일시',
+	CONSTRAINT `PK_TBL_REPORTS` PRIMARY KEY (`REPORT_CD`),
+	CONSTRAINT `FK_TBL_REPORT_GB_TO_TBL_REPORTS_1` FOREIGN KEY (`REPORT_GB`) REFERENCES `TBL_REPORT_GB` (`REPORT_GB`),
+	CONSTRAINT `FK_TBL_USERS_TO_TBL_REPORTS_1` FOREIGN KEY (`REPORT_USER_CD`) REFERENCES `TBL_USERS` (`USER_CD`) ON DELETE SET NULL,
+	CONSTRAINT `FK_TBL_USERS_TO_TBL_REPORTS_2` FOREIGN KEY (`TARGET_USER_CD`) REFERENCES `TBL_USERS` (`USER_CD`) ON DELETE SET NULL
+);
+
+-- =======================================================================
+-- TBL_MOVIES : 영화
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_MOVIES`;
+CREATE TABLE `TBL_MOVIES` (
+	`MOVIE_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '영화 코드 (PK)',
+	`MOVIE_NM`	VARCHAR(255)	NOT NULL	COMMENT '영화 제목',
+	`MOVIE_REG_DTTM`	DATETIME	NOT NULL	DEFAULT NOW()	COMMENT '데이터 등록일시',
+	`MOVIE_OVERVIEW`	VARCHAR(1000)	NOT NULL	COMMENT '줄거리',
+	`RELEASE_DT`	DATE	NULL	COMMENT '개봉일',
+	`RUNTIME`	INT	NULL	COMMENT '런타임 (분 단위)',
+	`POSTER_URL`	VARCHAR(255)	NULL	COMMENT '포스터 이미지 URL',
+	CONSTRAINT `PK_TBL_MOVIES` PRIMARY KEY (`MOVIE_CD`)
+);
+
+-- =======================================================================
+-- TBL_GENRES : 장르
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_GENRES`;
+CREATE TABLE `TBL_GENRES` (
+	`GENRE_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '장르 코드 (PK)',
+	`GENRE_NM`	VARCHAR(50)	NOT NULL	COMMENT '장르명 (한글)',
+	CONSTRAINT `PK_TBL_GENRES` PRIMARY KEY (`GENRE_CD`)
+);
+
+-- =======================================================================
+-- TBL_MOVIE_GENRES : 영화 장르
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_MOVIE_GENRES`;
+CREATE TABLE `TBL_MOVIE_GENRES` (
+	`GENRE_CD`	INT	NOT NULL	COMMENT '장르 코드 (PK, FK)',
+	`MOVIE_CD`	INT	NOT NULL	COMMENT '영화 코드 (PK, FK)',
+	CONSTRAINT `PK_TBL_MOVIE_GENRES` PRIMARY KEY (`GENRE_CD`, `MOVIE_CD`),
+	CONSTRAINT `FK_TBL_GENRES_TO_TBL_MOVIE_GENRES_1` FOREIGN KEY (`GENRE_CD`) REFERENCES `TBL_GENRES` (`GENRE_CD`) ON DELETE CASCADE,
+	CONSTRAINT `FK_TBL_MOVIES_TO_TBL_MOVIE_GENRES_1` FOREIGN KEY (`MOVIE_CD`) REFERENCES `TBL_MOVIES` (`MOVIE_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- TBL_PEOPLE : 인물
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_PEOPLE`;
+CREATE TABLE `TBL_PEOPLE` (
+	`PERSON_CD`	INT	NOT NULL AUTO_INCREMENT	COMMENT '인물 코드 (PK)',
+	`PERSON_NM`	VARCHAR(100)	NOT NULL	COMMENT '인물명',
+	`PROFILE_URL`	VARCHAR(255)	NULL	COMMENT '프로필 이미지 URL',
+	CONSTRAINT `PK_TBL_PEOPLE` PRIMARY KEY (`PERSON_CD`)
+);
+
+-- =======================================================================
+-- TBL_MOVIE_CAST : 영화 출연진
+-- =======================================================================
+DROP TABLE IF EXISTS `TBL_MOVIE_CAST`;
+CREATE TABLE `TBL_MOVIE_CAST` (
+	`PERSON_CD`	INT	NOT NULL	COMMENT '인물 코드 (PK, FK)',
+	`MOVIE_CD`	INT	NOT NULL	COMMENT '영화 코드 (PK, FK)',
+	`ROLE_NM`	VARCHAR(50)	NOT NULL	COMMENT '역할 (감독, 주연, 조연)',
+	`CHARACTER_NM`	VARCHAR(50)	NOT NULL	COMMENT '극중 배역 이름',
+	CONSTRAINT `PK_TBL_MOVIE_CAST` PRIMARY KEY (`PERSON_CD`, `MOVIE_CD`),
+	CONSTRAINT `FK_TBL_PEOPLE_TO_TBL_MOVIE_CAST_1` FOREIGN KEY (`PERSON_CD`) REFERENCES `TBL_PEOPLE` (`PERSON_CD`) ON DELETE CASCADE,
+	CONSTRAINT `FK_TBL_MOVIES_TO_TBL_MOVIE_CAST_1` FOREIGN KEY (`MOVIE_CD`) REFERENCES `TBL_MOVIES` (`MOVIE_CD`) ON DELETE CASCADE
+);
+
+-- =======================================================================
+-- 제약 조건 설정을 위해 잠시 비활성화했던 FK 체크를 다시 활성화합니다.
+-- =======================================================================
+SET foreign_key_checks = 1;
+```
+
+</details>
 
 ---
 
