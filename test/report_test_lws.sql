@@ -49,6 +49,8 @@ VALUES
         '리뷰에서저한태 욕했어요.',
         0
     );
+
+SELECT * FROM tbl_report_gb;
 SET
 @RPT1 = LAST_INSERT_ID();
 
@@ -238,31 +240,7 @@ SET
 
 
 
--- 3) 알림 - 신고자
-INSERT INTO
-    TBL_NOTIFICATIONS (
-                       USER_CD,
-                       NOTI_CONT
-)
-VALUES
-    (
-     @R3_USER,
-     '스포일러 신고접수'
-    );
-
-
--- 4) 알림 - 피신고자
-INSERT INTO
-    TBL_NOTIFICATIONS
-    (
-     USER_CD,
-     NOTI_CONT
-    )
-VALUES
-    (
-        @T3_USER,
-        '회원님의 게시물이 "스포일러" 사유로 신고 접수되었습니다'
-       );
 
 
 
+SELECT * FROM TBL_NOTIFICATIONS;

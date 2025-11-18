@@ -34,8 +34,8 @@ DELIMITER ;
 
 
 SELECT * FROM TBL_NOTIFICATIONS;*/
-DELIMITER //
 
+DELIMITER //
 DROP TRIGGER IF EXISTS trg_report_after_insert;
 
 CREATE TRIGGER trg_report_after_insert
@@ -64,10 +64,7 @@ BEGIN
                );
 
 end//
-
-
-
-
 DELIMITER ;
+
 
 SELECT * FROM TBL_REPORTS;
