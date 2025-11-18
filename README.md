@@ -119,8 +119,8 @@
 ---
 
 ## 📄 7. 요구사항 명세서
-요구사항 명세서(SRS) 링크를 여기에 넣어주세요.
-[요구사항 명세서 링크](https://example.com)
+
+[요구사항 명세서 링크](https://docs.google.com/spreadsheets/d/1Dzsq76gKhSPuUmJWd8vvfGTF1MSGJRGIXNhX9SVIqMY/edit?gid=1378379683#gid=1378379683)
 
 ---
 
@@ -131,6 +131,8 @@
 <div align="center">
 <img src="./img/usecase.png" alt="유스케이스 다이어그램" width="700" />
 </div>
+
+[유스케이스 다이어그램 링크](https://drive.google.com/file/d/1kIo6SOqdB-oSVYlT01-yCAPYiYR3gZuV/view?usp=drive_link)
 
 ---
 
