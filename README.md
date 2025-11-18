@@ -1028,11 +1028,8 @@ SET foreign_key_checks = 1;
 ---
 
 ## ✅ 11. 테스트 케이스 (Test Cases)
-# **📑 [PCJ] USER 테이블 테스트 케이스**
 
----
-
-<aside>
+<details><summary><b> 테스트케이스보기 </b></summary>
 
 **🎯 테스트 목적 (Objective)**
 
@@ -1212,7 +1209,7 @@ SELECT * FROM TBL_USERS;
 
 ---
 
-![image.png](attachment:30796811-477a-4b50-8b01-437ea302a3a0:image.png)
+![image.gif](./img/회원가입-테스트-케이스.gif)
 
 ---
 
@@ -1933,9 +1930,7 @@ WHERE
 
 ---
 
----
-
-</aside>
+</details>
 
 ---
 
